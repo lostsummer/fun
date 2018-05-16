@@ -28,42 +28,26 @@ def readCows():
     return cows
 
 
-def isConnectable(c, n):
+def walkRound(rest, past=[start.id], c=start):
     """
 
-    :param c: 当前所在奶牛位置
-    :param n: 将检查的下一个奶牛位置
-    :retruns : 是否可以从 c 移动至 n
-
-    """
-    if c.x == n.x or c.y == n.y:
-        return True
-    else:
-        return False
-
-
-def walkRound(left, c=start, past=[start.id]):
-    """
-
-    :param left: 除却当前点以外未经过点的集合
+    :param rest: 除却当前点以外未经过点的集合
     :param c: 当前点
     :param past: 经过点顺序列表用来记录路径
     :yield : 形成闭环的路径
 
     """
+    isConnectable = lambda c, n: c.x == n.x or c.y == n.y
+    toPoint = lambda rest, past, n: (rest.difference(set([n])), past + [n.id])
+
     # 逐层遍历，要注意每个节点状态对外层变量的改变只传递给下层，
-    # 而不影响同层和上层, 所以要对left拷贝，past还原.
-    for n in left:
+    # 而不影响同层和上层, 所以要对rest拷贝，past还原.
+    for n in rest:
         if isConnectable(c, n):
-            left_n = left.copy()
-            left_n.remove(n)
-            past_n = past[:]
-            past_n.append(n.id)
-            yield from walkRound(left_n, n, past_n)
-    if len(left) == 0:
+            yield from walkRound(*toPoint(rest, past, n), n)
+    if len(rest) == 0:
         if isConnectable(c, start):
-            past_n = past[:]
-            past_n.append(start.id)
+            past_n = past + [start.id]
             route = '-'.join([str(i) for i in past_n])
             yield route
 
