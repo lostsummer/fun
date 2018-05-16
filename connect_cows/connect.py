@@ -4,19 +4,14 @@
 
 import collections
 
+Point = collections.namedtuple('Point', ['id', 'x', 'y'])
+
 INPUT_FILE_PATH = 'connect.in'
 OUTPUT_FILE_PATH = 'connect.out'
 
-Point = collections.namedtuple('Point', ['id', 'x', 'y'])
 start = Point(id=0, x=0, y=0)
 
 def readCows():
-    """从输入文件首行个数读入所有奶牛坐标
-
-    :param file_path: 输入文件路径
-    :returns : 所有奶牛对象（id，坐标数据）的集合
-
-    """
     cows = set()
     with open(INPUT_FILE_PATH, 'r') as f:
         cow_num = int(f.readline())
@@ -29,34 +24,18 @@ def readCows():
 
 
 def walkRound(rest, past=[start.id], c=start):
-    """
-
-    :param rest: 除却当前点以外未经过点的集合
-    :param c: 当前点
-    :param past: 经过点顺序列表用来记录路径
-    :yield : 形成闭环的路径
-
-    """
-    isConnectable = lambda c, n: c.x == n.x or c.y == n.y
-    toPoint = lambda rest, past, n: (rest.difference(set([n])), past + [n.id])
-
-    # 逐层遍历，要注意每个节点状态对外层变量的改变只传递给下层，
-    # 而不影响同层和上层, 所以要对rest拷贝，past还原.
+    isConnectable = lambda n: c.x == n.x or c.y == n.y
+    toPoint = lambda n: (rest.difference(set([n])), past + [n.id])
     for n in rest:
-        if isConnectable(c, n):
-            yield from walkRound(*toPoint(rest, past, n), n)
+        if isConnectable(n):
+            yield from walkRound(*toPoint(n), n)
     if len(rest) == 0:
-        if isConnectable(c, start):
+        if isConnectable(start):
             past_n = past + [start.id]
             route = '-'.join([str(i) for i in past_n])
             yield route
 
 def writeOut(num):
-    """
-
-    :param num: 写入输出文件的路径数量
-
-    """
     with open(OUTPUT_FILE_PATH, 'w') as f:
         f.write('{}\n'.format(num))
 
