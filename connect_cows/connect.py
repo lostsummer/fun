@@ -6,37 +6,27 @@ import collections
 
 Point = collections.namedtuple('Point', ['id', 'x', 'y'])
 
-INPUT_FILE_PATH = 'connect.in'
-OUTPUT_FILE_PATH = 'connect.out'
-
+input_file_path = 'connect.in'
+output_file_path = 'connect.out'
 start = Point(id=0, x=0, y=0)
 
 def readCows():
-    cows = set()
-    with open(INPUT_FILE_PATH, 'r') as f:
-        cow_num = int(f.readline())
-        for i in range(cow_num):
-            id = i + 1
-            l = f.readline()
-            x, y = [int(s) for s in l.split()]
-            cows.add(Point(id=id, x=x, y=y))
-    return cows
-
+    with open(input_file_path, 'r') as f:
+        return {Point(i, *[int(s)
+                            for s in f.readline().split()])
+                for i in range(1, int(f.readline()) + 1)}
 
 def walkRound(rest, past=[start.id], c=start):
     isConnectable = lambda n: c.x == n.x or c.y == n.y
-    toPoint = lambda n: (rest.difference(set([n])), past + [n.id])
+    toPoint = lambda n: (rest.difference([n]), past + [n.id])
+    if not rest and isConnectable(start):
+        yield ' -> '.join([str(i) for i in past + [start.id]])
     for n in rest:
         if isConnectable(n):
             yield from walkRound(*toPoint(n), n)
-    if len(rest) == 0:
-        if isConnectable(start):
-            past_n = past + [start.id]
-            route = '-'.join([str(i) for i in past_n])
-            yield route
 
 def writeOut(num):
-    with open(OUTPUT_FILE_PATH, 'w') as f:
+    with open(output_file_path, 'w') as f:
         f.write('{}\n'.format(num))
 
 if __name__ == "__main__":
