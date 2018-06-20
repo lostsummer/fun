@@ -15,7 +15,7 @@ def readCows():
 
 def walkRound(rest, past=[start.id], c=start):
     connectable = lambda n: c.x == n.x or c.y == n.y
-    moveto = lambda n: (rest.difference([n]), past + [n.id])
+    moveto = lambda n: (rest-{n}, past+[n.id])
     if not rest and connectable(start):
         yield ' -> '.join([str(i) for i in past + [start.id]])
     for n in filter(connectable, rest):
