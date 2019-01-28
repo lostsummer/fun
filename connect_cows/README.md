@@ -2,7 +2,7 @@
 
 
 
-![img1](http://img.lostsummer.love/wiki-img/usco_problem_cows.jpg)
+![img1](http://140.143.250.15/wiki-img/usco_problem_cows.jpg)
 
 
 py代码是我写的。 
