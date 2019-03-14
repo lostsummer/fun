@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+#-*- coding: utf-8 -*-
 
 import itertools
+from multiprocessing import Pool
 
 """
 算法有3个重要的优化点:
@@ -23,7 +25,14 @@ def fetch(current, selected=[]):
             for i in range(current+1, 100-sum_val+1):
                 yield from fetch(i, selected_)
 
-choices = [c for h in range(1, MAX_HEAD + 1) for c in fetch(h)]
+def work(start):
+    return [i for i in fetch(start)]
 
-for c in choices:
-    print(','.join(str(i) for i in c))
+if __name__ == '__main__':
+    pool = Pool(MAX_HEAD)
+    results = pool.map(work, range(1, MAX_HEAD+1))
+    pool.close()
+    pool.join()
+    for r in results:
+        for c in r:
+            print(','.join(str(i) for i in c))
